@@ -1,90 +1,119 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
-import { Ionicons } from '@expo/vector-icons';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { StyleSheet, Text, View } from 'react-native'
+import React from 'react'
+import { Tabs, Redirect } from 'expo-router'
+import Icon from 'react-native-vector-icons/Ionicons';
 
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
-  const currentColors = Colors[colorScheme ?? 'light'];
 
-  return (
-    <Tabs
-      initialRouteName='index'
-      screenOptions={{
-        tabBarActiveTintColor: '#01AFF6',
-        tabBarInactiveTintColor: 'white',
-        tabBarStyle: {
-          backgroundColor: "#64757B",
-          height: 70
-        },
-        headerShown: false,
-      }}>
-      <Tabs.Screen
-        name="index"
-        options={{
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons
-              name={focused ? 'home' : 'home-outline'}
-              color={'white'}
-              size={35}
-            />
-          ),
-          tabBarLabel: () => null,
-        }}
-      />
-      <Tabs.Screen
-        name="search"
-        options={{
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons
-              name={focused ? 'search' : 'search-outline'}
-              color='white'
-              size={35}
-            />
-          ),
-          tabBarLabel: () => null
-        }}
-      />
-      <Tabs.Screen
-        name='wishlist'
-        options={{
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons
-              name={focused ? 'heart' : 'heart-outline'}
-              color='white'
-              size={35}
-            />
-          ),
-          tabBarLabel: () => null
-        }}
-      />
-      <Tabs.Screen
-        name='cart'
-        options={{
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons
-              name={focused ? 'cart' : 'cart-outline'}
-              color='white'
-              size={35}
-            />
-          ),
-          tabBarLabel: () => null
-        }}
-      />
-      <Tabs.Screen
-        name='profile'
-        options={{
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons
-              name={focused ? 'person-circle' : 'person-circle-outline'}
-              color='white'
-              size={35}
-            />
-          ),
-          tabBarLabel: () => null
-        }}
-      />
-    </Tabs>
-  );
+
+const TabsLayout = () => {
+    return (
+        <>
+            <Tabs
+                screenOptions={{
+                    tabBarShowLabel: false,
+                    tabBarActiveTintColor: "#29B1E0",
+                    tabBarInactiveTintColor: "#fff",
+                    tabBarStyle: {
+                        backgroundColor: "#64757B",
+                        height: 70
+                    }
+                }}
+            >
+                <Tabs.Screen
+                    name='home'
+                    options={{
+                        title: "Home",
+                        headerShown: false,
+                        tabBarIcon: ({ color, focused }) => (
+                            <View style={[styles.iconContainer, focused && styles.focusedIconContainer]}>
+                                <Icon
+                                    name='home'
+                                    size={35}
+                                    color={focused ? "#29B1E0" : "white"}
+                                />
+                            </View>
+                        )
+                    }}
+                />
+                <Tabs.Screen
+                    name='[query]'
+                    options={{
+                        title: "Search",
+                        headerShown: false,
+                        tabBarIcon: ({ color, focused }) => (
+                            <View style={[styles.iconContainer, focused && styles.focusedIconContainer]}>
+                                <Icon
+                                    name='search'
+                                    size={35}
+                                    color={focused ? "#29B1E0" : "white"}
+                                />
+                            </View>
+                        )
+                    }}
+                />
+                <Tabs.Screen
+                    name='wishlist'
+                    options={{
+                        title: "wishlist",
+                        headerShown: false,
+                        tabBarIcon: ({ color, focused }) => (
+                            <View style={[styles.iconContainer, focused && styles.focusedIconContainer]}>
+                                <Icon
+                                    name='heart'
+                                    size={35}
+                                    color={focused ? "#29B1E0" : "white"}
+                                />
+                            </View>
+                        )
+                    }}
+                />
+                <Tabs.Screen
+                    name='cart'
+                    options={{
+                        title: "Cart",
+                        headerShown: false,
+                        tabBarIcon: ({ color, focused }) => (
+                            <View style={[styles.iconContainer, focused && styles.focusedIconContainer]}>
+                                <Icon
+                                    name='cart'
+                                    size={35}
+                                    color={focused ? "#29B1E0" : "white"}
+                                />
+                            </View>
+                        )
+                    }}
+                />
+                <Tabs.Screen
+                    name='profile'
+                    options={{
+                        title: "Profile",
+                        headerShown: false,
+                        tabBarIcon: ({ color, focused }) => (
+                            <View style={[styles.iconContainer, focused && styles.focusedIconContainer]}>
+                                <Icon
+                                    name='person'
+                                    size={35}
+                                    color={focused ? "#29B1E0" : "white"}
+                                />
+                            </View>
+                        )
+                    }}
+                />
+
+            </Tabs>
+        </>
+    )
 }
+
+export default TabsLayout
+
+const styles = StyleSheet.create({
+    iconContainer: {
+        justifyContent: "center",
+        alignItems: "center",
+        borderBottomWidth: 0
+    },
+    focusedIconContainer: {
+        borderBottomWidth: 0
+    }
+})
