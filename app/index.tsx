@@ -1,18 +1,53 @@
-import { StyleSheet, Text, View, SafeAreaView, Image, TextInput, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, SafeAreaView, Image, TextInput, TouchableOpacity, Alert } from 'react-native'
 import CustomButton from '@/components/CustomButton'
 import React, { useState } from 'react'
-import { Link } from 'expo-router'
+import { Link, router } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 import { ScrollView } from 'react-native-gesture-handler'
 import Icon from 'react-native-vector-icons/Ionicons'
 import { Ionicons } from '@expo/vector-icons'
+import { signIn } from '@/lib/appwrite'
+
+interface FormState {
+  email: string;
+  password: string;
+}
 
 const index = () => {
   const [showPassword, setShowPassword] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [form, setform] = useState({
+    email: "",
+    password: ""
+  })
+
+  const handleChange = (field: keyof FormState, value: string) => {
+    setform(prev => ({
+      ...prev,
+      [field]: value
+    }))
+  }
 
   const tooglePassword = () => {
     setShowPassword(!showPassword)
   }
+
+  const handlePress = async() => {
+    if (!form.email || !form.password) {
+        Alert.alert("Error", "please fill in fields")
+    }
+    setIsLoading(true);
+    try {
+        await signIn(form.email,form.password)
+        router.replace("/home")
+    }
+    catch (error: any) {
+        Alert.alert("Error", error.message)
+    }
+    finally {
+        setIsLoading(false)
+    }
+}
 
   return (
     <SafeAreaView style={styles.container}>
@@ -43,7 +78,8 @@ const index = () => {
                 autoCapitalize='none'
                 placeholder='Your Email...'
                 placeholderTextColor="#888"
-                value=""
+                value={form.email}
+                onChangeText={(text)=> handleChange("email", text)}
               />
             </View>
             <View style={styles.inputContainer}>
@@ -58,7 +94,8 @@ const index = () => {
                 autoCapitalize='none'
                 placeholder='Your Password...'
                 placeholderTextColor="#888"
-                value=""
+                value={form.password}
+                onChangeText={(text)=>handleChange("password", text)}
               />
               <TouchableOpacity onPress={tooglePassword}>
                 <Ionicons
@@ -74,8 +111,10 @@ const index = () => {
 
             <CustomButton
               title="Sign In"
-              handlePress={() => { }}
+              handlePress={handlePress}
               containerStyles={styles.containerButton}
+              textStyles={styles.text}
+              isLoading={isLoading}
             />
 
             <View style={styles.signup}>
@@ -158,19 +197,22 @@ const styles = StyleSheet.create({
     fontSize: 20,
 
   },
-  signup:{
+  signup: {
     marginLeft: 10,
     display: "flex",
     flex: 1,
     flexDirection: "row",
-    alignItems : "center"
+    alignItems: "center"
   },
-  member:{
+  member: {
     color: "white",
-     fontSize: 20
+    fontSize: 20
   },
-  link:{
+  link: {
     color: "white",
-     fontSize: 20
+    fontSize: 20
+  },
+  text: {
+    fontWeight: "600"
   }
 })

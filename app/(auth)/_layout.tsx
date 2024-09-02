@@ -14,7 +14,7 @@ const _layout = () => {
           }}
         />
         <Stack.Screen
-          name='sign-up'
+          name='Sign-up'
           options={{
             headerShown: false
           }}

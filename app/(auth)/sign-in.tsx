@@ -6,11 +6,11 @@ import CustomButton from '@/components/CustomButton'
 const SignIn = () => {
   return (
     <SafeAreaView style={styles.container}>
-      <CustomButton
+      {/* <CustomButton
       title= "Sign In"
       handlePress={()=>{}}
       containerStyles={styles.container}
-      />
+      /> */}
     </SafeAreaView>
   )
 }
