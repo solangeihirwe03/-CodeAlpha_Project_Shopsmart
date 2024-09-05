@@ -1,7 +1,8 @@
 import { Dimensions, StyleSheet, Text, View, ScrollView, Image } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
-import { item } from '@/lib/dataItems'
+import { item, productItems } from '@/lib/dataItems'
 import Icon from 'react-native-vector-icons/FontAwesome'
+import Products from '@/components/products/Products'
 
 const { width } = Dimensions.get('window')
 
@@ -27,7 +28,7 @@ const Home = () => {
   }
 
   return (
-    <View>
+    <>
       <View>
         <ScrollView
           ref={scrollViewRef}
@@ -67,7 +68,17 @@ const Home = () => {
           ))}
         </View>
       </View>
-    </View>
+      <View style={styles.productContainer}>
+        {productItems.map((product) => (
+          <Products
+            id={product.id}
+            image={product.image}
+            price={product.price}
+            productName={product.productName}
+          />
+        ))}
+      </View>
+    </>
   )
 }
 
@@ -123,4 +134,9 @@ const styles = StyleSheet.create({
   },
   activeDot: { backgroundColor: '#E0D428' },
   inactiveDot: { backgroundColor: 'white' },
+  productContainer:{
+    display: "flex",
+    flex: 1,
+    flexDirection: "row"
+  }
 })
