@@ -35,7 +35,10 @@ export const createUser = async(email: string, password: string) => {
             password
         )
 
-        if(!newUser)throw Error
+        if(!newUser){
+            console.log(" failed to create user")
+            throw new Error("failed to create user")
+        }
 
         const avatarUrl = avatars.getInitials(email.split("@")[0])
 

@@ -5,6 +5,8 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { Link, router } from 'expo-router'
 import CustomButton from '@/components/CustomButton'
 import { createUser } from '@/lib/appwrite'
+import { createUserWithEmailAndPassword } from 'firebase/auth'
+import { FIREBASE_AUTH } from '@/lib/firebaseConfig'
 
 interface FormState {
     email: string,
@@ -18,6 +20,7 @@ const Signup = () => {
         email: "",
         password: ""
     })
+    const auth = FIREBASE_AUTH;
 
     const tooglePassword = () => {
         setShowPassword(!showPassword)
@@ -29,7 +32,8 @@ const Signup = () => {
         }
         setIsLoading(true);
         try {
-            await createUser(form.email,form.password)
+            const response = await createUserWithEmailAndPassword(auth, form.email, form.password);
+            console.log(response)
             router.replace("/home")
         }
         catch (error: any) {

@@ -1,12 +1,11 @@
-import { StyleSheet, Text, View, SafeAreaView, Image, TextInput, TouchableOpacity, Alert } from 'react-native'
+import { StyleSheet, Text, View, SafeAreaView, Image, TextInput, TouchableOpacity, Alert, KeyboardAvoidingView } from 'react-native'
 import CustomButton from '@/components/CustomButton'
 import React, { useState } from 'react'
 import { Link, router } from 'expo-router'
-import { StatusBar } from 'expo-status-bar'
 import { ScrollView } from 'react-native-gesture-handler'
-import Icon from 'react-native-vector-icons/Ionicons'
 import { Ionicons } from '@expo/vector-icons'
-import { signIn } from '@/lib/appwrite'
+import { FIREBASE_AUTH } from '@/lib/firebaseConfig'
+import { signInWithEmailAndPassword } from 'firebase/auth'
 
 interface FormState {
   email: string;
@@ -20,6 +19,7 @@ const index = () => {
     email: "",
     password: ""
   })
+  const auth = FIREBASE_AUTH;
 
   const handleChange = (field: keyof FormState, value: string) => {
     setform(prev => ({
@@ -32,22 +32,24 @@ const index = () => {
     setShowPassword(!showPassword)
   }
 
-  const handlePress = async() => {
+  const handlePress = async () => {
     if (!form.email || !form.password) {
-        Alert.alert("Error", "please fill in fields")
+      Alert.alert("Error", "please fill in fields")
     }
     setIsLoading(true);
     try {
-        await signIn(form.email,form.password)
-        router.replace("/home")
+      const response = await signInWithEmailAndPassword(auth, form.email, form.password)
+      console.log(response)
+      router.replace("/home")
     }
     catch (error: any) {
-        Alert.alert("Error", error.message)
+      console.log(error)
+      Alert.alert("Error", error.message)
     }
     finally {
-        setIsLoading(false)
+      setIsLoading(false)
     }
-}
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -68,43 +70,45 @@ const index = () => {
               welcome to our EZ ecommerce platform
             </Text>
 
-            <View style={styles.inputContainer}>
-              <Image
-                source={require("../assets/images/email.svg")}
-                style={styles.svg} />
-              <TextInput
-                style={styles.input}
-                keyboardType='email-address'
-                autoCapitalize='none'
-                placeholder='Your Email...'
-                placeholderTextColor="#888"
-                value={form.email}
-                onChangeText={(text)=> handleChange("email", text)}
-              />
-            </View>
-            <View style={styles.inputContainer}>
-              <Image
-                source={require("../assets/images/password.svg")}
-                style={styles.svg}
-              />
-              <TextInput
-                style={styles.input}
-                secureTextEntry={showPassword}
-                autoCorrect={false}
-                autoCapitalize='none'
-                placeholder='Your Password...'
-                placeholderTextColor="#888"
-                value={form.password}
-                onChangeText={(text)=>handleChange("password", text)}
-              />
-              <TouchableOpacity onPress={tooglePassword}>
-                <Ionicons
-                  name={showPassword ? "eye-off-outline" : "eye-outline"}
-                  size={25}
-                />
-              </TouchableOpacity>
 
-            </View>
+            <KeyboardAvoidingView>
+              <View style={styles.inputContainer}>
+                <Image
+                  source={require("../assets/images/email.svg")}
+                  style={styles.svg} />
+                <TextInput
+                  style={styles.input}
+                  keyboardType='email-address'
+                  autoCapitalize='none'
+                  placeholder='Your Email...'
+                  placeholderTextColor="#888"
+                  value={form.email}
+                  onChangeText={(text) => handleChange("email", text)}
+                />
+              </View>
+              <View style={styles.inputContainer}>
+                <Image
+                  source={require("../assets/images/password.svg")}
+                  style={styles.svg}
+                />
+                <TextInput
+                  style={styles.input}
+                  secureTextEntry={showPassword}
+                  autoCorrect={false}
+                  autoCapitalize='none'
+                  placeholder='Your Password...'
+                  placeholderTextColor="#888"
+                  value={form.password}
+                  onChangeText={(text) => handleChange("password", text)}
+                />
+                <TouchableOpacity onPress={tooglePassword}>
+                  <Ionicons
+                    name={showPassword ? "eye-off-outline" : "eye-outline"}
+                    size={25}
+                  />
+                </TouchableOpacity>
+
+              </View></KeyboardAvoidingView>
             <Text style={styles.forgotp}>
               Forgot Password
             </Text>
