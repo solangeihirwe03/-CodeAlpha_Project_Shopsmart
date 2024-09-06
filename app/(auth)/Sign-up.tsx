@@ -57,7 +57,7 @@ const Signup = () => {
                 <View>
                     <Image
                         source={require("../../assets/images/signin.png")}
-                        style={{ width: "auto", height: 170, marginBottom: 15 }}
+                        style={{ width: 400, height: 170, marginBottom: 15 }}
                         resizeMode='cover'
                     />
 

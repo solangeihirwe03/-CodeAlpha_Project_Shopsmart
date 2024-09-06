@@ -1,222 +1,181 @@
-import { StyleSheet, Text, View, SafeAreaView, Image, TextInput, TouchableOpacity, Alert, KeyboardAvoidingView } from 'react-native'
-import CustomButton from '@/components/CustomButton'
-import React, { useState } from 'react'
-import { Link, router } from 'expo-router'
-import { ScrollView } from 'react-native-gesture-handler'
-import { Ionicons } from '@expo/vector-icons'
-import { FIREBASE_AUTH } from '@/lib/firebaseConfig'
-import { signInWithEmailAndPassword } from 'firebase/auth'
+import { Dimensions, StyleSheet, Text, View, ScrollView, Image, SafeAreaView } from 'react-native'
+import React, { useEffect, useRef, useState } from 'react'
+import { item, productItems } from '@/lib/dataItems'
+import Icon from 'react-native-vector-icons/FontAwesome'
+import Products from '@/components/products/Products'
 
-interface FormState {
-  email: string;
-  password: string;
-}
+const width = Dimensions.get('window').width
 
-const index = () => {
-  const [showPassword, setShowPassword] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [form, setform] = useState({
-    email: "",
-    password: ""
-  })
-  const auth = FIREBASE_AUTH;
+const Home = () => {
+  const [currentIndex, setCurrentIndex] = useState(0);
 
-  const handleChange = (field: keyof FormState, value: string) => {
-    setform(prev => ({
-      ...prev,
-      [field]: value
-    }))
-  }
+  const scrollViewRef = useRef<ScrollView | null>(null);
 
-  const tooglePassword = () => {
-    setShowPassword(!showPassword)
-  }
+  useEffect(() => {
+    const interval = setInterval(() => {
+      let nextIndex = (currentIndex + 1) % item.length;
+      scrollViewRef.current!.scrollTo({ x: nextIndex * width, animated: true })
+      setCurrentIndex(nextIndex)
+    }, 2000)
 
-  const handlePress = async () => {
-    if (!form.email || !form.password) {
-      Alert.alert("Error", "please fill in fields")
-    }
-    setIsLoading(true);
-    try {
-      const response = await signInWithEmailAndPassword(auth, form.email, form.password)
-      console.log(response)
-      router.replace("/home")
-    }
-    catch (error: any) {
-      console.log(error)
-      Alert.alert("Error", error.message)
-    }
-    finally {
-      setIsLoading(false)
-    }
+    return () => clearInterval(interval)
+  }, [currentIndex, item.length])
+
+  const handleScroll = (event: any) => {
+    const scrollPosition = event.nativeEvent.contentOffset.x;
+    const index = Math.floor(scrollPosition / width)
+    setCurrentIndex(index)
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView>
       <ScrollView>
-        <View>
-          <Image
-            source={require("../assets/images/signin.png")}
-            style={{ width: "auto", height: 170, marginBottom: 15 }}
-            resizeMode='cover'
-          />
-
-          <View style={styles.signinLayout}>
-            <Text style={styles.heading}>
-              sign in to your account
-            </Text>
-
-            <Text style={styles.par}>
-              welcome to our EZ ecommerce platform
-            </Text>
-
-
-            <KeyboardAvoidingView>
-              <View style={styles.inputContainer}>
-                <Image
-                  source={require("../assets/images/email.svg")}
-                  style={styles.svg} />
-                <TextInput
-                  style={styles.input}
-                  keyboardType='email-address'
-                  autoCapitalize='none'
-                  placeholder='Your Email...'
-                  placeholderTextColor="#888"
-                  value={form.email}
-                  onChangeText={(text) => handleChange("email", text)}
-                />
-              </View>
-              <View style={styles.inputContainer}>
-                <Image
-                  source={require("../assets/images/password.svg")}
-                  style={styles.svg}
-                />
-                <TextInput
-                  style={styles.input}
-                  secureTextEntry={showPassword}
-                  autoCorrect={false}
-                  autoCapitalize='none'
-                  placeholder='Your Password...'
-                  placeholderTextColor="#888"
-                  value={form.password}
-                  onChangeText={(text) => handleChange("password", text)}
-                />
-                <TouchableOpacity onPress={tooglePassword}>
-                  <Ionicons
-                    name={showPassword ? "eye-off-outline" : "eye-outline"}
-                    size={25}
+        <View style={styles.headerContainer}>
+          <ScrollView
+            ref={scrollViewRef}
+            horizontal
+            pagingEnabled
+            onScroll={handleScroll}
+            showsHorizontalScrollIndicator={false}
+            scrollEventThrottle={16}
+          >
+            <View style={styles.cardLayout}>
+              {item.map((i, index) => (
+                <View key={index} style={styles.cardContainer}>
+                  <Image
+                    source={i.image}
+                    style={styles.image}
+                    resizeMode='cover'
                   />
-                </TouchableOpacity>
+                  <View style={styles.text}>
+                    <Text style={styles.par}>{i.description}</Text>
+                    <View style={styles.explore}>
+                      <Text style={styles.par}>Explore deals</Text>
+                      <Icon name='angle-double-right' size={30} color={"white"} />
+                    </View>
+                  </View>
 
-              </View></KeyboardAvoidingView>
-            <Text style={styles.forgotp}>
-              Forgot Password
-            </Text>
-
-            <CustomButton
-              title="Sign In"
-              handlePress={handlePress}
-              containerStyles={styles.containerButton}
-              textStyles={styles.text}
-              isLoading={isLoading}
-            />
-
-            <View style={styles.signup}>
-              <Text style={styles.member}>
-                Not a member?
-              </Text>
-              <Link href="/(auth)/Sign-up" style={styles.link}>Sign up</Link>
+                </View>
+              ))}
             </View>
+          </ScrollView>
+          <View style={styles.dotContainer}>
+            {item.map((_, index) => (
+              <View
+                key={index}
+                style={
+                  [styles.dot, currentIndex === index ? styles.activeDot : styles.inactiveDot]
+                }></View>
+            ))}
           </View>
         </View>
+        <View style={styles.featured}>
+          <Text style={styles.blackText}>Featured products</Text>
+          <View style={styles.view}>
+            <Text style={styles.blackText}>view all</Text>
+            <Icon name='angle-right' color={"black"} size={30} />
+          </View>
+        </View>
+        <View style={styles.productContainer}>
+          {productItems.map((product) => (
+            <Products
+              id={product.id}
+              image={product.image}
+              price={product.price}
+              productName={product.productName}
+            />
+          ))}
+        </View>
       </ScrollView>
-    </SafeAreaView >
+    </SafeAreaView>
   )
 }
 
-export default index
+export default Home
 
 const styles = StyleSheet.create({
-  container: {
-    display: "flex",
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#8DA7B1"
+  headerContainer: {
+    position: "relative"
   },
-  signinLayout: {
-    marginHorizontal: 10,
-    paddingHorizontal: 0
-  },
-  heading: {
-    fontWeight: "500",
-    textTransform: "capitalize",
-    fontSize: 30,
-    textAlign: "center"
-  },
-  par: {
-    textAlign: "center",
-    fontSize: 20,
-    paddingBottom: 30
-  },
-  inputContainer: {
-    backgroundColor: "white",
-    marginBottom: 20,
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    display: "flex",
-    flexDirection: "row",
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 80
-  },
-  svg: {
-    width: 40,
-    borderRightWidth: 2
-  },
-  input: {
-    paddingVertical: 10,
-    paddingHorizontal: 30,
-    backgroundColor: "white",
-    fontSize: 20,
-    borderWidth: 0,
-    borderColor: 'white',
-    shadowColor: 'transparent',
-    elevation: 0,
-    height: 52
-  },
-  containerButton: {
-    display: "flex",
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 80
-  },
-  forgotp: {
-    textAlign: "right",
-    marginTop: -15,
-    marginBottom: 20,
-    paddingRight: 25,
-    fontSize: 20,
-
-  },
-  signup: {
-    marginLeft: 10,
+  cardLayout: {
     display: "flex",
     flex: 1,
     flexDirection: "row",
-    alignItems: "center"
+    alignItems: "center",
+    justifyContent: "center",
+    width: width * 3,
+    marginTop: 40
   },
-  member: {
-    color: "white",
-    fontSize: 20
+  cardContainer: {
+    minWidth: width,
+    position: "relative",
+    marginLeft: 20,
+    height: 200
   },
-  link: {
-    color: "white",
-    fontSize: 20
+  image: {
+    width: width,
+    height: 170,
+    borderRadius: 22
   },
   text: {
-    fontWeight: "600"
+    position: "absolute",
+    left: 20,
+    top: 55,
+    color: "white",
+    fontSize: 24,
+    width: 300,
+  },
+  par: {
+    color: "white",
+    fontSize: 20
+  },
+  explore: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10
+  },
+  dotContainer: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: -44
+  },
+  dot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    marginHorizontal: 5,
+  },
+  activeDot: { 
+    backgroundColor: '#E0D428' 
+  },
+  inactiveDot: { 
+    backgroundColor: 'white' 
+  },
+  featured: {
+    marginLeft: 10,
+    marginTop: 35,
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  productContainer: {
+    display: "flex",
+    flex: 1,
+    flexDirection: "row",
+    marginTop: 16,
+    marginLeft: 10,
+    gap: 20
+  },
+  blackText:{
+    fontSize: 20
+  },
+  view:{
+    display: "flex",
+    flexDirection: "row",
+    gap: 10,
+    marginRight: 10,
+    alignItems: "center"
   }
 })
