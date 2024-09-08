@@ -4,14 +4,16 @@ import { item, productItems, categoryItems, sellerItems } from '@/lib/dataItems'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import Products from '@/components/products/Products'
 import ProductCategories from '@/components/products/ProductCategories';
-import Seller from '@/components/products/Sellers'
+import Seller from '@/components/products/Sellers';
+import { useNavigation } from '@react-navigation/native'
+import { Link } from 'expo-router'
 
 const width = Dimensions.get('window').width
 
 const Home = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
-
   const scrollViewRef = useRef<ScrollView | null>(null);
+  const navigation = useNavigation();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -72,10 +74,12 @@ const Home = () => {
       </View>
       <View style={styles.featured}>
         <Text style={styles.blackText}>Featured products</Text>
-        <View style={styles.view}>
-          <Text style={styles.blackText}>view all</Text>
-          <Icon name='angle-right' color={"black"} size={30} />
-        </View>
+        <Link href="/modals\featuredProducts">
+          <View style={styles.view}>
+            <Text style={styles.blackText}>view all</Text>
+            <Icon name='angle-right' color={"black"} size={30} />
+          </View>
+        </Link>
       </View>
       <ScrollView horizontal style={styles.productContainer}>
         {productItems.map((product) => (
@@ -223,7 +227,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 100
   },
-  seller:{
+  seller: {
     marginLeft: 10,
     marginBottom: 25,
     display: "flex",
