@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, ScrollView, Dimensions } from 'react-native'
+import { StyleSheet, Text, View, Image, ScrollView, Dimensions, StyleProp, ViewStyle } from 'react-native'
 import React, { useEffect, useState, useRef } from 'react'
 import { productItems } from '@/lib/dataItems'
 
@@ -6,11 +6,12 @@ interface productProps {
   id: string,
   image: any,
   price: number,
-  productName: string
+  productName: string;
+  style: StyleProp<ViewStyle>
 }
 
 
-const Products: React.FC<productProps> = ({ id, image, price, productName }) => {
+const Products: React.FC<productProps> = ({ id, image, price, productName, style }) => {
 
   return (
     <View >
@@ -20,13 +21,13 @@ const Products: React.FC<productProps> = ({ id, image, price, productName }) => 
         showsHorizontalScrollIndicator={false}
         style={styles.featured}
         >
-        <View>
+        <View style={style}>
           <Image
             source={image}
             style={styles.image}
             resizeMode='contain'
           />
-          <View style={styles.textContainer}>
+          <View style={[styles.textContainer, style]}>
             <Text style={styles.text}>{productName}</Text>
             <Text style={styles.text}>${price}</Text>
           </View>
@@ -42,6 +43,7 @@ export default Products
 const styles = StyleSheet.create({
   featured:{
     display: "flex",
+    flexDirection: "row",
     paddingRight: 20
   },
   image:{

@@ -1,4 +1,4 @@
-import { Dimensions, StyleSheet, Text, View } from 'react-native'
+import { Dimensions, StyleProp, StyleSheet, Text, View, ViewStyle } from 'react-native'
 import React from 'react'
 import { Link, LinkProps } from 'expo-router';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -6,14 +6,15 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 interface HeaderWithCartProps {
     title: string;
     backLink: any;
-    onCartPress: () => void
+    onCartPress: () => void;
+    style: StyleProp<ViewStyle>
 }
 
 const { width } = Dimensions.get("window")
 
-const HeaderWithCart: React.FC<HeaderWithCartProps> = ({ title, backLink, onCartPress }) => {
+const HeaderWithCart: React.FC<HeaderWithCartProps> = ({ title, backLink, onCartPress, style }) => {
     return (
-        <View style={styles.headerWithCart}>
+        <View style={[styles.headerWithCart, style]}>
             <View style={styles.title}>
                 <Link href={backLink}>
                     <Icon
@@ -42,17 +43,17 @@ export default HeaderWithCart
 const styles = StyleSheet.create({
     headerWithCart: {
         backgroundColor: "white",
-        height: 80,
+        height: 90,
         width: width,
-        elevation: 100,
         shadowColor: "#000",
         shadowOffset: {
             width: 6,
-            height: 6
+            height: 1
         },
         shadowOpacity: 0.6,
         shadowRadius: 4,
         paddingTop: 20,
+        paddingBottom: 15,
         display: "flex",
         flexDirection: "row",
         justifyContent: "space-between"

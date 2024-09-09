@@ -88,6 +88,7 @@ const Home = () => {
             image={product.image}
             price={product.price}
             productName={product.productName}
+            style={styles.extstyle}
           />
         ))}
       </ScrollView>
@@ -233,5 +234,8 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
+  },
+  extstyle:{
+
   }
 })

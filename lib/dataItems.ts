@@ -34,7 +34,7 @@ export const productItems = [
         id: "3",
         image: require("../assets/images/image3.png"),
         price: 1200.0,
-        productName: "iphone 13 pro"
+        productName: "iphone13 "
     },
     {
         id: "4",
