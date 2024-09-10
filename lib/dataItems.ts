@@ -117,3 +117,83 @@ export const sellerItems=[
         price: 15
     }
 ]
+
+export const allItems=[
+    {
+        id: "1",
+        image: require("../assets/images/category1.png"),
+        category: "babies",
+        name: "Infant pillow",
+        price: 20
+    },
+    {
+        id: "2",
+        image: require("../assets/images/category2.png"),
+        category: "women",
+        name: "Coat",
+        price: 50
+    },
+    {
+        id: "3",
+        image: require("../assets/images/category3.png"),
+        category: "men",
+        name: "Suit for men",
+        price: 50
+    },
+    {
+        id: "4",
+        image: require("../assets/images/cosmetics.png"),
+        category: "women",
+        name: "Proteins for hair",
+        price: 15
+    },
+    {
+        id: "5",
+        image: require("../assets/images/image1.png"),
+        category: "women",
+        name: "complete",
+        price: 25
+    },
+    {
+        id: "6",
+        image: require("../assets/images/dress.png"),
+        category: "women",
+        name: "long dress",
+        price: 25
+    },
+    {
+        id: "7",
+        image: require("../assets/images/image2.png"),
+        category: "men",
+        name: "T-shirt",
+        price: 10
+    },
+    {
+        id: "8",
+        image: require("../assets/images/image3.png"),
+        category: "electronics",
+        name: "iphone13",
+        price: 1200
+    },
+    {
+        id: "9",
+        image: require("../assets/images/image4.png"),
+        category: "babies",
+        name: "Baby lotion",
+        price: 10
+    },
+    {
+        id: "10",
+        image: require("../assets/images/image5.png"),
+        category: "men",
+        name: "Nike shoes",
+        price: 22
+    },
+    {
+        id: "11",
+        image: require("../assets/images/skirt.png"),
+        category: "women",
+        name: "Skirt",
+        price: 9
+    },
+]
