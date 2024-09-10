@@ -8,7 +8,7 @@ import {
   ScrollView,
   TouchableOpacity
 } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { allItems } from '@/lib/dataItems'
 import Icon from 'react-native-vector-icons/Ionicons'
 import { Link } from 'expo-router'
@@ -16,7 +16,16 @@ import { Link } from 'expo-router'
 const Search = () => {
   const [searchText, setSearchText] = useState("");
   const [filteredProducts, setFilteredProducts] = useState(allItems);
-  const [selectedCategory, setSelectedCategory] = useState('All')
+  const [selectedCategory, setSelectedCategory] = useState('All');
+
+  const [wishlist, setWishList] = useState<string[]>([]);
+
+  useEffect(() => {
+    const storedWishList = localStorage.getItem('wishlist');
+    if (storedWishList) {
+      setWishList(JSON.parse(storedWishList))
+    }
+  }, [])
 
   const handleSearch = (text: string) => {
     setSearchText(text);
@@ -39,9 +48,22 @@ const Search = () => {
     setFilteredProducts(filtered)
   }
 
-  const truncateWord = (word: string, length = 10)=>{
-    return word.length > length ? `${word.substring(0,length)}...` : word
+  const truncateWord = (word: string, length = 10) => {
+    return word.length > length ? `${word.substring(0, length)}...` : word
   }
+
+  const handleWishlistToogle = (itemId: string) => {
+    setWishList(prevWishlist => {
+      const updatedWishList = prevWishlist.includes(itemId)
+        ? prevWishlist.filter(id => id !== itemId)
+        : [...prevWishlist, itemId];
+
+      localStorage.setItem('wishlist', JSON.stringify(updatedWishList))
+      return updatedWishList
+    })
+  }
+
+  const isInWishlist = (itemId: string) => wishlist.includes(itemId)
   return (
     <View style={{ flex: 1 }}>
       <View style={styles.headerContainer}>
@@ -100,7 +122,14 @@ const Search = () => {
             />
             <View style={styles.icons}>
               <Icon name="cart-outline" size={25} color="#01AFF6" style={styles.iconStyle} />
-              <Icon name='heart-outline' size={25} color="#01AFF6" style={styles.iconStyle} />
+              <TouchableOpacity onPress={()=> handleWishlistToogle(item.id)}>
+                <Icon 
+                name={isInWishlist(item.id) ? 'heart' : 'heart-outline'} 
+                size={25} 
+                color="#01AFF6" 
+                style={styles.iconStyle} 
+                />
+              </TouchableOpacity>
             </View>
             <View style={styles.textContainer}>
               <Text style={styles.texts}>{truncateWord(item.name)}</Text>
@@ -149,7 +178,7 @@ const styles = StyleSheet.create({
     fontSize: 20
   },
   scrollView: {
-    paddingBottom:80,
+    paddingBottom: 80,
     height: 90
   },
   buttonContainer: {
@@ -165,7 +194,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#d9d9d9",
     alignItems: "center",
     justifyContent: "center",
-    height:40
+    height: 40
   },
   selectedCategoryButton: {
     backgroundColor: '#01AFF6'
